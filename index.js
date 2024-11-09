@@ -61,6 +61,17 @@ client.on('guildMemberAdd', async (member) => {
         const mainServer = client.guilds.cache.get(process.env.MAIN_SERVER_ID);
         try {
             const mainServerMember = await mainServer.members.fetch(member.id).catch(() => null);
+
+            // DM the user to inform them of the main server requirement
+            try {
+                await member.send(
+                    `Welcome to ${member.guild.name}! Please note: If you leave the main server (BilloXD), you will also be removed from this backup server.`
+                );
+                console.log(`Sent a DM to ${member.user.tag} informing them about the main server requirement.`);
+            } catch (error) {
+                console.error(`Could not send DM to ${member.user.tag}: ${error}`);
+            }
+
             if (!mainServerMember) {
                 console.log(`User ${member.user.tag} is not in the main server. Kicking them from the second server.`);
                 await kickHandler.handleKick(member, member.guild);
